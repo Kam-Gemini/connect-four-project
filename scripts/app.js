@@ -55,6 +55,7 @@ let checkersNumber = 1
 let oddsColor = ''
 let evensColor = ''
 let startingCircle = ''
+
 /*------------------------ Cached Element References ------------------------*/
 
 // cache the div elements - "divs" - use a querySelectAll
@@ -90,37 +91,37 @@ const playerTurn = document.querySelector(".players")
 // On Page Load
 generateBoard()
 const boardCircles = document.querySelectorAll(".circle")
-getStartingColor()
 
 function startGame() {
+    getStartingColor()
 }
 
 function generateBoard(){
     for(let idx = 0; idx < totalCheckers; idx++){
-      const cell = document.createElement('div')
-      const circle = document.createElement('div')
-      cell.classList.add('cell')
-      circle.classList.add('circle')
+      const cell = document.createElement('div')        // create the cells for the gird
+      const circle = document.createElement('div')      // create the checker slot that sits inside each cell
+      cell.classList.add('cell')                        // add style to the cell
+      circle.classList.add('circle')                    // add and manipulate color of circle "slot"
       circle.dataset.index = idx
-      circle.dataset.row = Math.floor(idx / 7) + 1;
-      circle.dataset.column = (idx % 7) + 1;
+      circle.dataset.row = Math.floor(idx / 7) + 1;     // add column as a dataset value to help target cell and obtain postion on grid
+      circle.dataset.column = (idx % 7) + 1;            // add row as a dataset value to help target celt and obtain position on grid
       cell.style.width = `${100 / gridColumns}%`
       cell.style.height = `${100 / gridRows}%`
       gridContainer.appendChild(cell).appendChild(circle)
-      gridCells.push(cell)
+      gridCells.push(cell)                              // generate board
       const circles = document.querySelectorAll(".circle")
     }
   }
 
 function getStartingColor() {
-    const startingCircle = document.createElement('div')
+    const startingCircle = document.createElement('div')    // create the div for the player turn in the game state section
     playerTurn.appendChild(startingCircle)
     startingCircle.classList.add('player-turn')
     const randomIdx = Math.floor(Math.random() * colorChoice.length)
-    startingColor = colorChoice[randomIdx]
-    startingCircle.style.backgroundColor = startingColor
+    startingColor = colorChoice[randomIdx]                  // randomise the starting color
+    startingCircle.style.backgroundColor = startingColor    // add starting color to the player turn checker
     const startingColorIdx = colorChoice.indexOf(startingColor)
-    if (startingColorIdx % 2 === 0) {
+    if (startingColorIdx % 2 === 0) {                       // which color will be dropped when number is odd versus even
         evensColor = 'red'
         oddsColor = 'yellow'
     }
@@ -130,7 +131,36 @@ function getStartingColor() {
     }
 }
 
+function selectPosition(event) {
+    checkersNumber += 1
+    if (checkersNumber % 2 === 0) {
+        turn = 'Evens'
+    }
+    else {
+        turn = 'Odds'
+    }
+    column = event.target.dataset.column
+    columnArray = Array.from(boardCircles).filter(div => div.dataset.column === column)
+    for (let idx = columnArray.length; idx >= 0; idx--) {
+        row = idx
+        const targetCell = document.querySelector(`[data-row="${row}"][data-column="${column}"]`)
+        const backgroundColor = window.getComputedStyle(targetCell).backgroundColor;
+        if (backgroundColor === 'rgb(255, 255, 255)') {
+            startingCircle = document.querySelector('.player-turn')
+            if (turn === 'Evens') {
+                targetCell.style.backgroundColor = evensColor
+                startingCircle.style.backgroundColor = oddsColor
+            } else {
+                targetCell.style.backgroundColor = oddsColor
+                startingCircle.style.backgroundColor = evensColor
+            }
+            break;
+        }
+    }
+}
 
+
+boardCircles.forEach(circle => circle.addEventListener('click', selectPosition));
 
 startButton.addEventListener('click', startGame);
 
