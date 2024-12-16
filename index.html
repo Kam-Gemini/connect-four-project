@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Kalnia:wght@100..700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles/main.css">
   <title>ConnectFour</title>
   <script defer src="scripts/app.js" charset="utf-8"></script>
@@ -10,20 +13,19 @@
 <body>
   <main class="game-board">
     <button id="start-game">Start Game</button>
-    <h2 class="game-result">RED WINS</h2>
+    <h2 class="game-result"></h2>
     <section class="game-container">
       <div class="grid">
         <!-- Grid will be generated here -->
       </div>
       <div class="game-state">
         <div class="players">
-          <h2 class="red">Red Player</h2>
-          <h2 class="yellow">Yellow Player</h2>
+          <h2>Player Turn</h2>
         </div>
         <div class="score-board">
           <h3>Score Board</h3>
-          <h2 class="red">Red = 1</h2>
-          <h2 class="yellow">Yellow = 0</h2>
+          <h2 class="red" id="red-score">Red = 0</h2>
+          <h2 class="yellow" id="yellow-score">Yellow = 0</h2>
         </div>
       </div>
     </section>

@@ -2,8 +2,15 @@
     box-sizing: border-box;
 }
 
+.audiowide-regular {
+    font-family: "Audiowide", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+  
 body {
     margin: 0;
+    font-family: "Audiowide";
 }
 
 .game-board {
@@ -11,18 +18,20 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    margin-top: 30px;
 }
 
 .game-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 100px;
+    gap: 80px;
 }
   
 .grid {
     height: 700px;
-    width: 700px;
+    width: 800px;
+    background-color: blue;
 }
   
 .grid div {
@@ -35,7 +44,7 @@ body {
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 100px;
+    gap: 80px;
 }
 
 .red {
@@ -43,9 +52,41 @@ body {
 }
 
 .yellow {
-    color: yellow;
+    color: rgba(255, 255, 0, 0.9);
 }
 
 .score-board {
     border: 1px solid black;
+    background-color: lightgray;
+    border-radius: 10%;
+    padding: 10px;
 }
+
+.circle {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 1px solid black;
+    background-color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    cursor: pointer;
+}
+
+.player-turn {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+
+.cell {
+    background-color: blue;
+    position: relative;
+}
+
+/* .players {
+    background-color: lightblue;
+} */

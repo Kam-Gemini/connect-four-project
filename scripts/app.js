@@ -48,6 +48,13 @@ const colorChoice = ['red', 'yellow']
 // create a variable to track the yellow score - global
 // number of checkers used
 
+let startingColor = ''
+let columnArray = ''
+let targetCell = ''
+let checkersNumber = 1
+let oddsColor = ''
+let evensColor = ''
+let startingCircle = ''
 /*------------------------ Cached Element References ------------------------*/
 
 // cache the div elements - "divs" - use a querySelectAll
@@ -58,6 +65,10 @@ const colorChoice = ['red', 'yellow']
 
 const startButton = document.querySelector('#start-game')
 const gridContainer = document.querySelector('.grid')
+const redScore = document.querySelector('#red-score')
+const yellowScore = document.querySelector('#yellow-score')
+const gameResult = document.querySelector(".game-result")
+const playerTurn = document.querySelector(".players")
 
 /*-------------------------------- Functions --------------------------------*/
 
@@ -78,18 +89,51 @@ const gridContainer = document.querySelector('.grid')
 
 // On Page Load
 generateBoard()
+const boardCircles = document.querySelectorAll(".circle")
+getStartingColor()
+
+function startGame() {
+}
 
 function generateBoard(){
-    console.log("generate grid")
     for(let idx = 0; idx < totalCheckers; idx++){
       const cell = document.createElement('div')
+      const circle = document.createElement('div')
       cell.classList.add('cell')
+      circle.classList.add('circle')
+      circle.dataset.index = idx
+      circle.dataset.row = Math.floor(idx / 7) + 1;
+      circle.dataset.column = (idx % 7) + 1;
       cell.style.width = `${100 / gridColumns}%`
       cell.style.height = `${100 / gridRows}%`
-      gridContainer.appendChild(cell)
+      gridContainer.appendChild(cell).appendChild(circle)
       gridCells.push(cell)
+      const circles = document.querySelectorAll(".circle")
     }
   }
+
+function getStartingColor() {
+    const startingCircle = document.createElement('div')
+    playerTurn.appendChild(startingCircle)
+    startingCircle.classList.add('player-turn')
+    const randomIdx = Math.floor(Math.random() * colorChoice.length)
+    startingColor = colorChoice[randomIdx]
+    startingCircle.style.backgroundColor = startingColor
+    const startingColorIdx = colorChoice.indexOf(startingColor)
+    if (startingColorIdx % 2 === 0) {
+        evensColor = 'red'
+        oddsColor = 'yellow'
+    }
+    else {
+        evensColor = 'yellow'
+        oddsColor = 'red'
+    }
+}
+
+
+
+startButton.addEventListener('click', startGame);
+
 /*-------------------------------- Game Rules -------------------------------*/
 
 // #### The game should take place on a 7 by 7 grid of cells, centered on the screen
