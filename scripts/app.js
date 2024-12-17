@@ -55,6 +55,8 @@ let checkersNumber = 1
 let oddsColor = ''
 let evensColor = ''
 let startingCircle = ''
+let redWins = 0
+let yellowWins = 0
 
 /*------------------------ Cached Element References ------------------------*/
 
@@ -92,10 +94,6 @@ const playerTurn = document.querySelector(".players")
 generateBoard()
 const boardCircles = document.querySelectorAll(".circle")
 
-function startGame() {
-    getStartingColor()
-}
-
 function generateBoard(){
     for(let idx = 0; idx < totalCheckers; idx++){
       const cell = document.createElement('div')        // create the cells for the gird
@@ -111,7 +109,22 @@ function generateBoard(){
       gridCells.push(cell)                              // generate board
       const circles = document.querySelectorAll(".circle")
     }
-  }
+}
+
+function startGame() {
+    checkersNumber = 1                              
+    const allCircles = document.querySelectorAll('.circle');    // reset all slots in grid to white to clear the board for a new game
+    for (let i = 0; i < allCircles.length; i++) {
+        allCircles[i].style.backgroundColor = 'white';
+    }
+    gameResult.innerHTML = ''                                   // reset game result caption
+    const playerTurnDiv = document.querySelector('.players')
+    if (playerTurnDiv.children.length >= 2) {                   // remove div that indicates whose turn it is
+        const secondChild = playerTurnDiv.children[1]
+        playerTurnDiv.removeChild(secondChild)
+    }
+    getStartingColor()
+}
 
 function getStartingColor() {
     const startingCircle = document.createElement('div')    // create the div for the player turn in the game state section
@@ -121,7 +134,7 @@ function getStartingColor() {
     startingColor = colorChoice[randomIdx]                  // randomise the starting color
     startingCircle.style.backgroundColor = startingColor    // add starting color to the player turn checker
     const startingColorIdx = colorChoice.indexOf(startingColor)
-    if (startingColorIdx % 2 === 0) {                       // which color will be dropped when number is odd versus even
+    if (startingColorIdx % 2 === 0) {                       // which color will be dropped when turn is odd versus even
         evensColor = 'red'
         oddsColor = 'yellow'
     }
@@ -132,33 +145,94 @@ function getStartingColor() {
 }
 
 function selectPosition(event) {
-    checkersNumber += 1
-    if (checkersNumber % 2 === 0) {
+    checkersNumber += 1                                 // increment number of checkers used with each click
+    if (checkersNumber % 2 === 0) {                     // check if odd or even turn
         turn = 'Evens'
     }
     else {
         turn = 'Odds'
     }
-    column = event.target.dataset.column
-    columnArray = Array.from(boardCircles).filter(div => div.dataset.column === column)
-    for (let idx = columnArray.length; idx >= 0; idx--) {
+    column = event.target.dataset.column                // obtain column that has been clicked on
+    columnArray = Array.from(boardCircles).filter(div => div.dataset.column === column) // grab all the slots in that column as an array
+    for (let idx = columnArray.length; idx >= 0; idx--) {       // iterate through the divs in the selected column
         row = idx
-        const targetCell = document.querySelector(`[data-row="${row}"][data-column="${column}"]`)
+        const targetCell = document.querySelector(`[data-row="${row}"][data-column="${column}"]`) // select target cell to drop checker into
         const backgroundColor = window.getComputedStyle(targetCell).backgroundColor;
-        if (backgroundColor === 'rgb(255, 255, 255)') {
+        if (backgroundColor === 'rgb(255, 255, 255)') {         // check if color of cell is white (empty)
             startingCircle = document.querySelector('.player-turn')
-            if (turn === 'Evens') {
+            if (turn === 'Evens') {                             // check if even or odd turn and set color of the cell
                 targetCell.style.backgroundColor = evensColor
-                startingCircle.style.backgroundColor = oddsColor
+                startingCircle.style.backgroundColor = oddsColor // update starting circle color to indicate the other player's turn
             } else {
                 targetCell.style.backgroundColor = oddsColor
                 startingCircle.style.backgroundColor = evensColor
             }
-            break;
+            break;              // if slot found for the checker break out of loop, otherwise loop round to test the row above (minus 1)
         }
+    }
+    if (checkersNumber > 7) {
+        checkWinner()
     }
 }
 
+function checkWinner() {
+    let connectedCheckers = 0
+    if (checkersNumber % 2 === 0) {
+        color = evensColor
+    }
+    else {
+        color = oddsColor
+    }
+    targetCell = document.querySelector(`[data-row="${row}"][data-column="${column}"]`) // position of last checker played
+    let checkWinningColor = targetCell.style.backgroundColor    // color of last checker played
+    if (row <= 4 ) {                                // check if there are 4 in a row vertically
+        for (let currentRow = row; currentRow < 8; currentRow++) {      // loop to check if next checker below is the same color
+            adjacentCell = document.querySelector(`[data-row="${currentRow}"][data-column="${column}"]`) 
+            let adjacentColor = adjacentCell.style.backgroundColor
+            if (checkWinningColor === adjacentColor) {
+                connectedCheckers ++                    // if same color add 1 to connected checkers
+            } 
+            else {                          // if not the same color reset connected checkers and loop round to check the next one 
+                connectedCheckers = 0
+            }
+            if (connectedCheckers === 4) {
+                gameResult.innerHTML = `${checkWinningColor} Wins`.toUpperCase() // declare the game winner
+                gameResult.style.color = checkWinningColor          // update color of game winner text
+                if (checkWinningColor === 'red') {          // update scoreboard 
+                    redWins = Number(redWins + 1)
+                    redScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${redWins}`
+                } else {
+                    yellowWins = Number(yellowWins + 1)
+                    yellowScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${yellowWins}`
+                }
+            }
+        }
+        
+    }
+    if (column >= 4 ) {     // check if there are four in a row horizontally
+        for (let currentColumn = column; currentColumn >= column - 4 && currentColumn >= 1; currentColumn--) {
+            adjacentCell = document.querySelector(`[data-row="${row}"][data-column="${currentColumn}"]`)
+            let adjacentColor = adjacentCell.style.backgroundColor
+            if (checkWinningColor === adjacentColor) {
+                connectedCheckers ++
+            } 
+            else {
+                connectedCheckers = 0
+            }
+            if (connectedCheckers === 4) {
+                gameResult.innerHTML = `${checkWinningColor} Wins`.toUpperCase()
+                gameResult.style.color = checkWinningColor
+                if (checkWinningColor === 'red') {
+                    redWins = Number(redWins + 1)
+                    redScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${redWins}`
+                } else {
+                    yellowWins = Number(yellowWins + 1)
+                    yellowScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${yellowWins}`
+                }
+            }
+        }   
+    }
+}
 
 boardCircles.forEach(circle => circle.addEventListener('click', selectPosition));
 
