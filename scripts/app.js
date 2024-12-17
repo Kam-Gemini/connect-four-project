@@ -2,33 +2,33 @@
 
 // > Add a click event for every div in the grid - use ForEach method
 // > Create a function named startGame that will be triggered by the start button
-    // create a function that randomly selects red/yellow to start the game
-        // colorChoice = [red, yellow]
+// create a function that randomly selects red/yellow to start the game
+// colorChoice = [red, yellow]
 // > Create a function selectedColumn that will identify the column using the column attribute
-    // use event target method to obtain column data attribute
+// use event target method to obtain column data attribute
 // > Create a function that works out the position of the counter based on selectedColumn
-    // use event target to obtain row data attribute
-    // iterate through to see if div is empty, starting with row 7
+// use event target to obtain row data attribute
+// iterate through to see if div is empty, starting with row 7
 // > create a turn function that works out which turn it is, yellow/red
-    // use modulas to check if even/odd
+// use modulas to check if even/odd
 // > Create a function that changes the class of div to red/yellow based on which turn it is
 // > Create a function called checkWinner that works out if there are four in a row of red/yellow checkers
-    // this function is to be called after every play
-    // call scoreboard function if winner declared
+// this function is to be called after every play
+// call scoreboard function if winner declared
 // > create a scoreboard function that updates the score and declares a winner
 // > if the board is full, usedCheckers = 49, declare the game a draw
 // > click the startButton to start a new game
-    // ensure all the divs are empty at the start of a new game
+// ensure all the divs are empty at the start of a new game
 
 /*----------------------------------- HTML------------------------------------*/
 
 // > create game board using flex method
 // > create start game button and a div for game result caption
 // > create game container div with display flex
-    // grid container div and game state div
-        // in code genereate 49 divs, 7 by 7, assigning data attributes: index, column, row
-        // create two child divs for the game state div
-            // players div and scoreboard div
+// grid container div and game state div
+// in code genereate 49 divs, 7 by 7, assigning data attributes: index, column, row
+// create two child divs for the game state div
+// players div and scoreboard div
 
 /*-------------------------------- Constants --------------------------------*/
 
@@ -57,6 +57,7 @@ let evensColor = ''
 let startingCircle = ''
 let redWins = 0
 let yellowWins = 0
+let connectedCheckers = 0
 
 /*------------------------ Cached Element References ------------------------*/
 
@@ -94,25 +95,25 @@ const playerTurn = document.querySelector(".players")
 generateBoard()
 const boardCircles = document.querySelectorAll(".circle")
 
-function generateBoard(){
-    for(let idx = 0; idx < totalCheckers; idx++){
-      const cell = document.createElement('div')        // create the cells for the gird
-      const circle = document.createElement('div')      // create the checker slot that sits inside each cell
-      cell.classList.add('cell')                        // add style to the cell
-      circle.classList.add('circle')                    // add and manipulate color of circle "slot"
-      circle.dataset.index = idx
-      circle.dataset.row = Math.floor(idx / 7) + 1;     // add column as a dataset value to help target cell and obtain postion on grid
-      circle.dataset.column = (idx % 7) + 1;            // add row as a dataset value to help target celt and obtain position on grid
-      cell.style.width = `${100 / gridColumns}%`
-      cell.style.height = `${100 / gridRows}%`
-      gridContainer.appendChild(cell).appendChild(circle)
-      gridCells.push(cell)                              // generate board
-      const circles = document.querySelectorAll(".circle")
+function generateBoard() {
+    for (let idx = 0; idx < totalCheckers; idx++) {
+        const cell = document.createElement('div')        // create the cells for the gird
+        const circle = document.createElement('div')      // create the checker slot that sits inside each cell
+        cell.classList.add('cell')                        // add style to the cell
+        circle.classList.add('circle')                    // add and manipulate color of circle "slot"
+        circle.dataset.index = idx
+        circle.dataset.row = Math.floor(idx / 7) + 1;     // add column as a dataset value to help target cell and obtain postion on grid
+        circle.dataset.column = (idx % 7) + 1;            // add row as a dataset value to help target celt and obtain position on grid
+        cell.style.width = `${100 / gridColumns}%`
+        cell.style.height = `${100 / gridRows}%`
+        gridContainer.appendChild(cell).appendChild(circle)
+        gridCells.push(cell)                              // generate board
+        const circles = document.querySelectorAll(".circle")
     }
 }
 
 function startGame() {
-    checkersNumber = 1                              
+    checkersNumber = 1
     const allCircles = document.querySelectorAll('.circle');    // reset all slots in grid to white to clear the board for a new game
     for (let i = 0; i < allCircles.length; i++) {
         allCircles[i].style.backgroundColor = 'white';
@@ -124,6 +125,7 @@ function startGame() {
         playerTurnDiv.removeChild(secondChild)
     }
     getStartingColor()
+    boardCircles.forEach(circle => circle.addEventListener('click', selectPosition));
 }
 
 function getStartingColor() {
@@ -185,56 +187,114 @@ function checkWinner() {
     }
     targetCell = document.querySelector(`[data-row="${row}"][data-column="${column}"]`) // position of last checker played
     let checkWinningColor = targetCell.style.backgroundColor    // color of last checker played
-    if (row <= 4 ) {                                // check if there are 4 in a row vertically
+    if (row <= 4) {                                // check if there are 4 in a row vertically
         for (let currentRow = row; currentRow < 8; currentRow++) {      // loop to check if next checker below is the same color
-            adjacentCell = document.querySelector(`[data-row="${currentRow}"][data-column="${column}"]`) 
+            adjacentCell = document.querySelector(`[data-row="${currentRow}"][data-column="${column}"]`)
             let adjacentColor = adjacentCell.style.backgroundColor
             if (checkWinningColor === adjacentColor) {
-                connectedCheckers ++                    // if same color add 1 to connected checkers
-            } 
+                connectedCheckers++                    // if same color add 1 to connected checkers
+            }
             else {                          // if not the same color reset connected checkers and loop round to check the next one 
                 connectedCheckers = 0
             }
-            if (connectedCheckers === 4) {
-                gameResult.innerHTML = `${checkWinningColor} Wins`.toUpperCase() // declare the game winner
-                gameResult.style.color = checkWinningColor          // update color of game winner text
-                if (checkWinningColor === 'red') {          // update scoreboard 
-                    redWins = Number(redWins + 1)
-                    redScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${redWins}`
-                } else {
-                    yellowWins = Number(yellowWins + 1)
-                    yellowScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${yellowWins}`
-                }
-            }
+            checkFourInARow(connectedCheckers, checkWinningColor)
         }
-        
+
     }
-    if (column >= 4 ) {     // check if there are four in a row horizontally
+    if (column >= 4) {     // check if there are four in a row horizontally
         for (let currentColumn = column; currentColumn >= column - 4 && currentColumn >= 1; currentColumn--) {
             adjacentCell = document.querySelector(`[data-row="${row}"][data-column="${currentColumn}"]`)
-            let adjacentColor = adjacentCell.style.backgroundColor
+            adjacentColor = adjacentCell.style.backgroundColor
             if (checkWinningColor === adjacentColor) {
-                connectedCheckers ++
-            } 
+                connectedCheckers++
+            }
             else {
                 connectedCheckers = 0
             }
-            if (connectedCheckers === 4) {
-                gameResult.innerHTML = `${checkWinningColor} Wins`.toUpperCase()
-                gameResult.style.color = checkWinningColor
-                if (checkWinningColor === 'red') {
-                    redWins = Number(redWins + 1)
-                    redScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${redWins}`
-                } else {
-                    yellowWins = Number(yellowWins + 1)
-                    yellowScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${yellowWins}`
+            checkFourInARow(connectedCheckers, checkWinningColor)
+        }
+    }
+    if (checkersNumber > 10) {
+        if (row >= 4 && column >= 4 && connectedCheckers != 4) {         // check diagonal - bottom right to top left
+            for (let newColumn = column, newRow = row; newRow > 0 && newColumn > 0; newColumn--, newRow--) {
+                adjacentCell = document.querySelector(`[data-row="${newRow}"][data-column="${newColumn}"]`)
+                adjacentColor = adjacentCell.style.backgroundColor
+                if (checkWinningColor === adjacentColor) {
+                    connectedCheckers++
                 }
+                else {
+                    connectedCheckers = 0
+                    break
+                }
+                checkFourInARow(connectedCheckers, checkWinningColor)
             }
-        }   
+        }
+        if (row <= 4 && column <= 4 && connectedCheckers != 4) {        // check diagonal - top left to bottom right
+            for (let newColumn = column, newRow = row; newRow <= 7 && newColumn <= 7; newColumn++, newRow++) {
+                adjacentCell = document.querySelector(`[data-row="${newRow}"][data-column="${newColumn}"]`)
+                console.log(adjacentCell)
+                adjacentColor = adjacentCell.style.backgroundColor
+                console.log(adjacentColor)
+                if (checkWinningColor === adjacentColor) {
+                    connectedCheckers++
+                }
+                else {
+                    connectedCheckers = 0
+                    break
+                }
+                checkFourInARow(connectedCheckers, checkWinningColor)
+            }
+        }
+        if (row >= 4 && column <= 4 && connectedCheckers != 4) {      // check diagonal - bottom left to top right
+            console.log('bottom left to top right')
+            for (let newColumn = column, newRow = row; newRow > 0 && newColumn <= 7; newColumn++, newRow--) {
+                adjacentCell = document.querySelector(`[data-row="${newRow}"][data-column="${newColumn}"]`)
+                console.log(adjacentCell)
+                adjacentColor = adjacentCell.style.backgroundColor
+                console.log(adjacentColor)
+                if (checkWinningColor === adjacentColor) {
+                    connectedCheckers++
+                }
+                else {
+                    connectedCheckers = 0
+                    break
+                }
+                checkFourInARow(connectedCheckers, checkWinningColor)
+            }
+        }
+        if (row <= 4 && column >= 4 && connectedCheckers != 4) {    // check diagonal - top right to bottom left
+            console.log('top right to bottom left')
+            for (let newColumn = column, newRow = row; newRow <= 7 && newColumn >= 1; newColumn--, newRow++) {
+                adjacentCell = document.querySelector(`[data-row="${newRow}"][data-column="${newColumn}"]`)
+                adjacentColor = adjacentCell.style.backgroundColor
+                if (checkWinningColor === adjacentColor) {
+                    connectedCheckers++
+                }
+                else {
+                    connectedCheckers = 0
+                    break
+                }
+                checkFourInARow(connectedCheckers, checkWinningColor)
+            }
+        }
     }
 }
 
-boardCircles.forEach(circle => circle.addEventListener('click', selectPosition));
+function checkFourInARow(connectedCheckers, checkWinningColor) {
+    console.log(`check Four: ${connectedCheckers}`)
+    if (connectedCheckers >= 4) {
+        boardCircles.forEach(circle => circle.removeEventListener('click', selectPosition));
+        gameResult.innerHTML = `${checkWinningColor} Wins`.toUpperCase()    // declare result in caption above board
+        gameResult.style.color = checkWinningColor                          // add winning color to result test
+        if (checkWinningColor === 'red') {      // update scoreboard
+            redWins++
+            redScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${redWins}`
+        } else {
+            yellowWins++
+            yellowScore.innerHTML = `${checkWinningColor.charAt(0).toUpperCase()}${checkWinningColor.slice(1).toLowerCase()} = ${yellowWins}`
+        }
+    }
+}
 
 startButton.addEventListener('click', startGame);
 
