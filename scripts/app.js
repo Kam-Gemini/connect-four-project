@@ -159,7 +159,7 @@ function selectPosition(event) {
     for (let idx = columnArray.length; idx >= 0; idx--) {       // iterate through the divs in the selected column
         row = idx
         const targetCell = document.querySelector(`[data-row="${row}"][data-column="${column}"]`) // select target cell to drop checker into
-        const backgroundColor = window.getComputedStyle(targetCell).backgroundColor;
+        const backgroundColor = window.getComputedStyle(targetCell).backgroundColor
         if (backgroundColor === 'rgb(255, 255, 255)') {         // check if color of cell is white (empty)
             startingCircle = document.querySelector('.player-turn')
             if (turn === 'Evens') {                             // check if even or odd turn and set color of the cell
@@ -175,6 +175,9 @@ function selectPosition(event) {
     if (checkersNumber > 7) {
         checkWinner()
     }
+    if (checkersNumber === 49) {
+        gameResult.innerHTML = `Game is a Draw`.toUpperCase()
+    }
 }
 
 function checkWinner() {
@@ -185,11 +188,11 @@ function checkWinner() {
     else {
         color = oddsColor
     }
-    targetCell = document.querySelector(`[data-row="${row}"][data-column="${column}"]`) // position of last checker played
+    targetCell = document.querySelector(`[data-row="${row}"][data-column="${column}"]`)     // position of last checker played
     let checkWinningColor = targetCell.style.backgroundColor    // color of last checker played
     if (row <= 4) {                                // check if there are 4 in a row vertically
-        for (let currentRow = row; currentRow < 8; currentRow++) {      // loop to check if next checker below is the same color
-            adjacentCell = document.querySelector(`[data-row="${currentRow}"][data-column="${column}"]`)
+        for (let currentRow = row; currentRow < 7; currentRow++) {      // loop to check if next checker below is the same color
+            let adjacentCell = document.querySelector(`[data-row="${currentRow}"][data-column="${column}"]`)
             let adjacentColor = adjacentCell.style.backgroundColor
             if (checkWinningColor === adjacentColor) {
                 connectedCheckers++                    // if same color add 1 to connected checkers
@@ -201,10 +204,10 @@ function checkWinner() {
         }
 
     }
-    if (column >= 4) {     // check if there are four in a row horizontally
+    if (column >= 4) {     // check if there are four in a row horizontally left to right
         for (let currentColumn = column; currentColumn >= column - 4 && currentColumn >= 1; currentColumn--) {
-            adjacentCell = document.querySelector(`[data-row="${row}"][data-column="${currentColumn}"]`)
-            adjacentColor = adjacentCell.style.backgroundColor
+            let adjacentCell = document.querySelector(`[data-row="${row}"][data-column="${currentColumn}"]`)
+            let adjacentColor = adjacentCell.style.backgroundColor
             if (checkWinningColor === adjacentColor) {
                 connectedCheckers++
             }
@@ -214,75 +217,94 @@ function checkWinner() {
             checkFourInARow(connectedCheckers, checkWinningColor)
         }
     }
-    if (checkersNumber > 10) {
-        if (row >= 4 && column >= 4 && connectedCheckers != 4) {         // check diagonal - bottom right to top left
-            for (let newColumn = column, newRow = row; newRow > 0 && newColumn > 0; newColumn--, newRow--) {
-                adjacentCell = document.querySelector(`[data-row="${newRow}"][data-column="${newColumn}"]`)
-                adjacentColor = adjacentCell.style.backgroundColor
-                if (checkWinningColor === adjacentColor) {
-                    connectedCheckers++
-                }
-                else {
-                    connectedCheckers = 0
-                    break
-                }
-                checkFourInARow(connectedCheckers, checkWinningColor)
+    if (column <= 4) {     // check if there are four in a row horizontally right to left
+        for (let currentColumn = column; currentColumn <= column + 4 && currentColumn < 8; currentColumn++) {
+            let adjacentCell = document.querySelector(`[data-row="${row}"][data-column="${currentColumn}"]`)
+            let adjacentColor = adjacentCell.style.backgroundColor
+            if (checkWinningColor === adjacentColor) {
+                connectedCheckers++
             }
-        }
-        if (row <= 4 && column <= 4 && connectedCheckers != 4) {        // check diagonal - top left to bottom right
-            for (let newColumn = column, newRow = row; newRow <= 7 && newColumn <= 7; newColumn++, newRow++) {
-                adjacentCell = document.querySelector(`[data-row="${newRow}"][data-column="${newColumn}"]`)
-                console.log(adjacentCell)
-                adjacentColor = adjacentCell.style.backgroundColor
-                console.log(adjacentColor)
-                if (checkWinningColor === adjacentColor) {
-                    connectedCheckers++
-                }
-                else {
-                    connectedCheckers = 0
-                    break
-                }
-                checkFourInARow(connectedCheckers, checkWinningColor)
+            else {
+                connectedCheckers = 0
             }
+            checkFourInARow(connectedCheckers, checkWinningColor)
         }
-        if (row >= 4 && column <= 4 && connectedCheckers != 4) {      // check diagonal - bottom left to top right
-            console.log('bottom left to top right')
-            for (let newColumn = column, newRow = row; newRow > 0 && newColumn <= 7; newColumn++, newRow--) {
-                adjacentCell = document.querySelector(`[data-row="${newRow}"][data-column="${newColumn}"]`)
-                console.log(adjacentCell)
-                adjacentColor = adjacentCell.style.backgroundColor
-                console.log(adjacentColor)
-                if (checkWinningColor === adjacentColor) {
-                    connectedCheckers++
-                }
-                else {
-                    connectedCheckers = 0
-                    break
-                }
-                checkFourInARow(connectedCheckers, checkWinningColor)
-            }
-        }
-        if (row <= 4 && column >= 4 && connectedCheckers != 4) {    // check diagonal - top right to bottom left
-            console.log('top right to bottom left')
-            for (let newColumn = column, newRow = row; newRow <= 7 && newColumn >= 1; newColumn--, newRow++) {
-                adjacentCell = document.querySelector(`[data-row="${newRow}"][data-column="${newColumn}"]`)
-                adjacentColor = adjacentCell.style.backgroundColor
-                if (checkWinningColor === adjacentColor) {
-                    connectedCheckers++
-                }
-                else {
-                    connectedCheckers = 0
-                    break
-                }
-                checkFourInARow(connectedCheckers, checkWinningColor)
-            }
-        }
+    }
+    if (checkersNumber > 10) {                              // check for diagonal winners
+        diagonalArray1 = [0, 8, 16, 24, 32, 40, 48]         // indexes of all diagonals as arrays
+        diagonalArray2 = [7, 15, 23, 31, 39, 47]
+        diagonalArray3 = [14, 22, 30, 38, 46]
+        diagonalArray4 = [21, 29, 37, 45]
+        diagonalArray5 = [1, 9, 17, 25, 33, 41]
+        diagonalArray6 = [2, 10, 18, 26, 34]
+        diagonalArray7 = [3, 11, 19, 27]
+        diagonalArray8 = [6, 12, 18, 24, 30, 36, 42]
+        diagonalArray9 = [5, 11, 17, 23, 29, 35]
+        diagonalArray10 = [4, 10, 16, 22, 28]
+        diagonalArray11 = [3, 9, 15, 21]
+        diagonalArray12 = [13, 19, 25, 31, 37, 43]
+        diagonalArray13 = [20, 26, 32, 38, 44]
+        diagonalArray14 = [27, 33, 39, 45]
+        
+        allDiagonalArray = [diagonalArray1, diagonalArray2, diagonalArray3, diagonalArray4, diagonalArray5, diagonalArray6, diagonalArray7, diagonalArray8, diagonalArray9, diagonalArray10, diagonalArray11, diagonalArray12, diagonalArray13, diagonalArray14]
+
+        const targetCellIndex = Number(targetCell.dataset.index)        // index of last checker
+        const matchingArrays = allDiagonalArray.filter(innerArray => innerArray.includes(targetCellIndex));
+        console.log(matchingArrays)
+        
+        let firstDiagonalArray = [];
+        let secondDiagonalArray = [];
+
+        firstDiagonalArray = matchingArrays[0]
+        secondDiagonalArray = matchingArrays[1]
+      
+        diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningColor)        
     }
 }
 
+function diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningColor) {
+    let connectedCheckers = 0
+    console.log(`firstDiagonalArray: ${firstDiagonalArray}`)
+    console.log(`secondDiagonalArray: ${secondDiagonalArray}`)
+    const boardCircles = document.querySelectorAll(".circle")
+    diagonalArray = Array.from(boardCircles).filter((_, index) => firstDiagonalArray.includes(index))
+    let colorArray = []
+    diagonalArray.forEach(div => {
+        const color = div.style.backgroundColor
+        colorArray.push(color)
+        console.log(colorArray)
+    })
+        for (let i = 0; i < colorArray.length; i++) {
+            if (colorArray[i] === checkWinningColor) {
+                connectedCheckers++
+            } else {
+                connectedCheckers = 0
+            }
+            console.log(`firstDiagonal connected: ${connectedCheckers}`)
+            checkFourInARow(connectedCheckers, checkWinningColor)
+        }
+        if (secondDiagonalArray && secondDiagonalArray.length > 0 && connectedCheckers < 4) {
+            connectedCheckers = 0
+            diagonalArray = Array.from(boardCircles).filter((_, index) => secondDiagonalArray.includes(index))
+            colorArray = []
+            diagonalArray.forEach(div => {
+            const color = div.style.backgroundColor
+            colorArray.push(color)
+            })
+            for (let i = 0; i < colorArray.length; i++) {
+                if (colorArray[i] === checkWinningColor) {
+                    connectedCheckers++
+                } else {
+                    connectedCheckers = 0
+                }
+            console.log(`secondDiagonal connected: ${connectedCheckers}`)
+            checkFourInARow(connectedCheckers, checkWinningColor)
+            }
+    }
+} 
+
 function checkFourInARow(connectedCheckers, checkWinningColor) {
-    console.log(`check Four: ${connectedCheckers}`)
-    if (connectedCheckers >= 4) {
+    if (connectedCheckers === 4) {
         boardCircles.forEach(circle => circle.removeEventListener('click', selectPosition));
         gameResult.innerHTML = `${checkWinningColor} Wins`.toUpperCase()    // declare result in caption above board
         gameResult.style.color = checkWinningColor                          // add winning color to result test
