@@ -132,6 +132,7 @@ function getStartingColor() {
     const startingCircle = document.createElement('div')    // create the div for the player turn in the game state section
     playerTurn.appendChild(startingCircle)
     startingCircle.classList.add('player-turn')
+    console.log(startingCircle)
     const randomIdx = Math.floor(Math.random() * colorChoice.length)
     startingColor = colorChoice[randomIdx]                  // randomise the starting color
     startingCircle.style.backgroundColor = startingColor    // add starting color to the player turn checker
@@ -175,7 +176,7 @@ function selectPosition(event) {
     if (checkersNumber > 7) {
         checkWinner()
     }
-    if (checkersNumber === 49) {
+    if (checkersNumber > 49) {
         gameResult.innerHTML = `Game is a Draw`.toUpperCase()
     }
 }
@@ -204,32 +205,33 @@ function checkWinner() {
         }
 
     }
-    if (column >= 4) {     // check if there are four in a row horizontally left to right
-        for (let currentColumn = column; currentColumn >= column - 4 && currentColumn >= 1; currentColumn--) {
-            let adjacentCell = document.querySelector(`[data-row="${row}"][data-column="${currentColumn}"]`)
-            let adjacentColor = adjacentCell.style.backgroundColor
-            if (checkWinningColor === adjacentColor) {
-                connectedCheckers++
-            }
-            else {
-                connectedCheckers = 0
-            }
-            checkFourInARow(connectedCheckers, checkWinningColor)
+
+    rowsArray = [                   // get array of all circles based on row value
+        Array.from(boardCircles).filter(div => div.dataset.row === '1'),
+        Array.from(boardCircles).filter(div => div.dataset.row === '2'),
+        Array.from(boardCircles).filter(div => div.dataset.row === '3'),
+        Array.from(boardCircles).filter(div => div.dataset.row === '4'),
+        Array.from(boardCircles).filter(div => div.dataset.row === '5'),
+        Array.from(boardCircles).filter(div => div.dataset.row === '6'),
+        Array.from(boardCircles).filter(div => div.dataset.row === '7')
+    ]
+
+    const targetCellRow = Number(targetCell.dataset.row) - 1 // obtain row value for target cell
+    const targetRow = rowsArray[targetCellRow]      // array containg all cells in that row
+    let colorArray = []
+    targetRow.forEach(div => {                      // transform array to color attribute held by each cell
+        const color = div.style.backgroundColor
+        colorArray.push(color)
+    })
+    for (let i = 0; i < colorArray.length; i++) {
+        if (colorArray[i] === checkWinningColor) {
+            connectedCheckers++
+        } else {
+            connectedCheckers = 0
         }
+        checkFourInARow(connectedCheckers, checkWinningColor)
     }
-    if (column <= 4) {     // check if there are four in a row horizontally right to left
-        for (let currentColumn = column; currentColumn <= column + 4 && currentColumn < 8; currentColumn++) {
-            let adjacentCell = document.querySelector(`[data-row="${row}"][data-column="${currentColumn}"]`)
-            let adjacentColor = adjacentCell.style.backgroundColor
-            if (checkWinningColor === adjacentColor) {
-                connectedCheckers++
-            }
-            else {
-                connectedCheckers = 0
-            }
-            checkFourInARow(connectedCheckers, checkWinningColor)
-        }
-    }
+
     if (checkersNumber > 10) {                              // check for diagonal winners
         diagonalArray1 = [0, 8, 16, 24, 32, 40, 48]         // indexes of all diagonals as arrays
         diagonalArray2 = [7, 15, 23, 31, 39, 47]
@@ -249,11 +251,10 @@ function checkWinner() {
         allDiagonalArray = [diagonalArray1, diagonalArray2, diagonalArray3, diagonalArray4, diagonalArray5, diagonalArray6, diagonalArray7, diagonalArray8, diagonalArray9, diagonalArray10, diagonalArray11, diagonalArray12, diagonalArray13, diagonalArray14]
 
         const targetCellIndex = Number(targetCell.dataset.index)        // index of last checker
-        const matchingArrays = allDiagonalArray.filter(innerArray => innerArray.includes(targetCellIndex));
-        console.log(matchingArrays)
+        const matchingArrays = allDiagonalArray.filter(innerArray => innerArray.includes(targetCellIndex)) // check for matching arrays for index value of target cell
         
-        let firstDiagonalArray = [];
-        let secondDiagonalArray = [];
+        let firstDiagonalArray = []     // first diagonal containing matching index value
+        let secondDiagonalArray = []    // second diagonal containing matching index value for overlapping diagonals
 
         firstDiagonalArray = matchingArrays[0]
         secondDiagonalArray = matchingArrays[1]
@@ -264,26 +265,22 @@ function checkWinner() {
 
 function diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningColor) {
     let connectedCheckers = 0
-    console.log(`firstDiagonalArray: ${firstDiagonalArray}`)
-    console.log(`secondDiagonalArray: ${secondDiagonalArray}`)
-    const boardCircles = document.querySelectorAll(".circle")
-    diagonalArray = Array.from(boardCircles).filter((_, index) => firstDiagonalArray.includes(index))
-    let colorArray = []
-    diagonalArray.forEach(div => {
-        const color = div.style.backgroundColor
+    const boardCircles = document.querySelectorAll(".circle")  
+    diagonalArray = Array.from(boardCircles).filter((_, index) => firstDiagonalArray.includes(index)) // filter array based on target cell index and array of cells in that diagonal
+    let colorArray = []     
+    diagonalArray.forEach(div => {                                
+        const color = div.style.backgroundColor // transform diagonal array to color attributes for that array
         colorArray.push(color)
-        console.log(colorArray)
     })
-        for (let i = 0; i < colorArray.length; i++) {
+        for (let i = 0; i < colorArray.length; i++) {   // check for matching colors in the array
             if (colorArray[i] === checkWinningColor) {
                 connectedCheckers++
             } else {
                 connectedCheckers = 0
             }
-            console.log(`firstDiagonal connected: ${connectedCheckers}`)
             checkFourInARow(connectedCheckers, checkWinningColor)
         }
-        if (secondDiagonalArray && secondDiagonalArray.length > 0 && connectedCheckers < 4) {
+        if (secondDiagonalArray && secondDiagonalArray.length > 0 && connectedCheckers < 4) { // filter on second diagonal array for when cell belongs to overlapping diagonals
             connectedCheckers = 0
             diagonalArray = Array.from(boardCircles).filter((_, index) => secondDiagonalArray.includes(index))
             colorArray = []
@@ -297,7 +294,6 @@ function diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningCol
                 } else {
                     connectedCheckers = 0
                 }
-            console.log(`secondDiagonal connected: ${connectedCheckers}`)
             checkFourInARow(connectedCheckers, checkWinningColor)
             }
     }
