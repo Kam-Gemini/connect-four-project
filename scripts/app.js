@@ -207,20 +207,11 @@ function checkWinner() {
         checkFourInARow(connectedCheckers, checkWinningColor)
     }
 
-    rowsArray = [                   // get array of all circles based on row value
-        Array.from(boardCircles).filter(div => div.dataset.row === '1'),
-        Array.from(boardCircles).filter(div => div.dataset.row === '2'),
-        Array.from(boardCircles).filter(div => div.dataset.row === '3'),
-        Array.from(boardCircles).filter(div => div.dataset.row === '4'),
-        Array.from(boardCircles).filter(div => div.dataset.row === '5'),
-        Array.from(boardCircles).filter(div => div.dataset.row === '6'),
-        Array.from(boardCircles).filter(div => div.dataset.row === '7')
-    ]
+    let targetCellRow = targetCell.dataset.row
+    rowArray = Array.from(boardCircles).filter(div => div.dataset.row === targetCellRow)
 
-    const targetCellRow = Number(targetCell.dataset.row) - 1 // obtain row value for target cell
-    const targetRow = rowsArray[targetCellRow]      // array containg all cells in that row
     let colorRowArray = []
-    targetRow.forEach(div => {                      // transform array to color attribute held by each cell
+    rowArray.forEach(div => {                      // transform array to color attribute held by each cell
         const color = div.style.backgroundColor
         colorRowArray.push(color)
     })
