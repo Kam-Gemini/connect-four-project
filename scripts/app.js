@@ -203,7 +203,7 @@ function checkWinner() {
             connectedCheckers = 0
         }
         if (connectedCheckers >= 4) {
-            winningArray.forEach(circle => circle.style.border = '6px solid gold')
+            winningArray.forEach(circle => circle.style.border = '6px solid goldenrod')
             checkFourInARow(connectedCheckers, checkWinningColor)
         }
     }
@@ -221,7 +221,7 @@ function checkWinner() {
             connectedCheckers = 0
         }
         if (connectedCheckers >= 4) {
-            winningArray.forEach(circle => circle.style.border = '6px solid gold')
+            winningArray.forEach(circle => circle.style.border = '6px solid goldenrod')
             checkFourInARow(connectedCheckers, checkWinningColor)
         }
     }
@@ -272,7 +272,7 @@ function diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningCol
             connectedCheckers = 0
         }
         if (connectedCheckers >= 4) {
-            winningArray.forEach(circle => circle.style.border = '6px solid gold')
+            winningArray.forEach(circle => circle.style.border = '6px solid goldenrod')
             checkFourInARow(connectedCheckers, checkWinningColor)
         }
     }
@@ -291,7 +291,7 @@ function diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningCol
                 connectedCheckers = 0
             }
             if (connectedCheckers >= 4) {
-                winningArray.forEach(circle => circle.style.border = '6px solid gold')
+                winningArray.forEach(circle => circle.style.border = '6px solid goldenrod')
                 checkFourInARow(connectedCheckers, checkWinningColor)
             }
         }

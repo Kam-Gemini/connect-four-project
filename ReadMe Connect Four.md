@@ -205,21 +205,22 @@ My initial approach of iterating through adjacent cells one by one, whilst worki
 
 Once confronted by these issues for diagonals I decided to change my approach and use an array method, which was a much better strategy and resulted in cleaner and more robust code. This led me to re-visit code I had written for vertical and horizontal wins and re-write that code in-line with this new approach. Although the previous code had been tested and was working, I considered it important for consistency and efficiency.
 
+Having completed a fully working and tested version, I decided to enhance the UX by highlighting the winning “hand” with a golden border. This proved more tricky than imagined as the original code was not designed with that in mind. However, I was able to implement this feature and integrate it within the original function and even managed to make the code more streamlined as I had to target elements in a more efficient way, which resulted in the same number of lines (code), if not less.
+
 **Wins**
 
 * Pseudocode was comprehensive and really helped map out the overall build approach.  
 * Randomising the player-turn at the start of each game and then having the checker ‘pulse’ to indicate who’s turn it was.  
 * Resolving the problem of figuring out how to check for diagonal wins by using the array method.  
 * Implementing the array method for horizontal and vertical wins.  
+* Enhancing the UX by adding a gold border to the winning “hand”, this was done after a working version of the game had already been completed.  
 * Made every effort to ensure the code is “DRY” and not too “WET”.
 
 **Key Learnings/Takeaways**
 
-This project really helped me grow in my coding journey and I will take away many valuable lessons from it. Firstly, the importance of planning, the more comprehensive and thorough you are, the easier and smoother the build process is. Also having the foresight to anticipate potential problems/difficulties in the planning stages should help inform the build approach. Spending a little extra time at the start can go a long way.
+This project really helped me grow in my coding journey and I will take away many valuable lessons from it. Firstly, the importance of planning, the more comprehensive and thorough it is, the easier and smoother the build process will be. Also, having the foresight to anticipate potential problems/difficulties in the planning stages should help inform the build approach. Spending a little extra time at the start can go a long way.
 
-I now have a much better conception of the DOM and understanding of how to target and manipulate objects using JavaScript. I have definitely improved my HTML, CSS and JavaScript skills and sharpened my problem solving skills.
-
-My problem solving skills really came to the fore and give me confidence for future projects.
+I now have a much better conception of the DOM and understanding of how to target and manipulate objects using JavaScript. I have definitely sharpened my HTML, CSS and JavaScript skills and demonstrated important problem solving skills.
 
 **Bugs**
 
