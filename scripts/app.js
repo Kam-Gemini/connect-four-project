@@ -279,7 +279,7 @@ function diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningCol
             connectedCheckers = 0
         }
         if (connectedCheckers >= 4) {
-            winningArray.forEach(circle => circle.classList.add('pulse', 'winning-hand'))
+            winningArray.forEach(circle => circle.style.border = '6px solid goldenrod')
             checkFourInARow(connectedCheckers, checkWinningColor)
         }
     }
