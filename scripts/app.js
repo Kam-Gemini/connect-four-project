@@ -51,7 +51,7 @@ const colorChoice = ['red', 'yellow']
 let startingColor = ''
 let columnArray = ''
 let targetCell = ''
-let checkersNumber = 1
+let checkersNumber = 0
 let oddsColor = ''
 let evensColor = ''
 let startingCircle = ''
@@ -74,6 +74,8 @@ const yellowScore = document.querySelector('#yellow-score')
 const playerTurn = document.querySelector(".players")
 const gameResultDiv = document.querySelector("#game-result")
 const gameBoard = document.querySelector(".game-board")
+const gameResult = document.createElement('h2')
+
 
 /*-------------------------------- Functions --------------------------------*/
 
@@ -114,7 +116,7 @@ function generateBoard() {
 }
 
 function startGame(gameResultDiv, gameResult) {
-    checkersNumber = 1
+    checkersNumber = 0
     const allCircles = document.querySelectorAll('.circle')     // reset all slots in grid to white to clear the board for a new game
     for (let i = 0; i < allCircles.length; i++) {
         allCircles[i].style.backgroundColor = 'white'
@@ -202,12 +204,13 @@ function selectPosition(event) {
         }          
     }
 
-    if (checkersNumber > 7) {
+    if (checkersNumber > 6) {
         setTimeout(() => {
             checkWinner()
         },row*300)
     }
-    if (checkersNumber > 49) {
+    if (checkersNumber > 48) {
+        gameResultDiv.appendChild(gameResult)
         gameResult.innerHTML = `Game is a Draw`.toUpperCase()
         boardCircles.forEach(circle => circle.removeEventListener('click', selectPosition))
     }
@@ -290,13 +293,11 @@ function checkWinner() {
         secondDiagonalArray = matchingArrays[1]
         setTimeout(() => {
             diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningColor)
-            console.log(row*300)
         },row*300)     
     }
 }
 
 function diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningColor) {
-    console.log(row)
     let connectedCheckers = 0
     const boardCircles = document.querySelectorAll(".circle")  
     diagonalArray = Array.from(boardCircles).filter((_, index) => firstDiagonalArray.includes(index)) // filter array based on target cell index and array of cells in that diagonal
@@ -338,10 +339,9 @@ function diagonalArrays(firstDiagonalArray, secondDiagonalArray, checkWinningCol
 } 
 
 function checkFourInARow(connectedCheckers, checkWinningColor) {
+    boardCircles.forEach(circle => circle.removeEventListener('click', selectPosition))
+    gameResultDiv.appendChild(gameResult)
     if (connectedCheckers === 4) {
-        boardCircles.forEach(circle => circle.removeEventListener('click', selectPosition))
-        let gameResult = document.createElement('h2')
-        gameResultDiv.appendChild(gameResult)
         gameResult.innerHTML = `${checkWinningColor} Wins`.toUpperCase()    // declare result in caption above board
         gameResult.style.color = checkWinningColor                          // add winning color to result test
         if (checkWinningColor === 'red') {      // update scoreboard
