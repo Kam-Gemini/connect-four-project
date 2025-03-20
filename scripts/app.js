@@ -148,12 +148,12 @@ function getStartingColor() {
     startingCircle.style.backgroundColor = startingColor    // add starting color to the player turn checker
     const startingColorIdx = colorChoice.indexOf(startingColor)
     if (startingColorIdx % 2 === 0) {                       // which color will be dropped when turn is odd versus even
-        evensColor = 'red'
-        oddsColor = 'yellow'
-    }
-    else {
         evensColor = 'yellow'
         oddsColor = 'red'
+    }
+    else {
+        evensColor = 'red'
+        oddsColor = 'yellow'
     }
 }
 
